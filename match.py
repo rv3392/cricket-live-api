@@ -34,7 +34,105 @@ class Match(Resource):
 
         return text
 
-            
+class MatchRecent(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
+
+        text = json.loads(match_json.read())
+        return text["live"]
+
+class Status(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
+
+        text = json.loads(match_json.read())
+        return text["live"]["status"]
+
+class Innings(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
         
+        text = json.loads(match_json.read())
+        return text["innings"]
+            
+class Description(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
+        
+        text = json.loads(match_json.read())
+        return text["description"]
+
+class Summary(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
+        
+        text = json.loads(match_json.read())
+        return text["match"]["current_summary"]
+
+class Break(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
+        
+        text = json.loads(match_json.read())
+        return text["match"]["current_summary"]
+        
+class CurrentBatsmen(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
+        
+        text = json.loads(match_json.read())
+        return text["centre"]["batting"]
+
+class CurrentBowlers(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
+        
+        text = json.loads(match_json.read())
+        return text["centre"]["bowling"]
+
+class TeamDetails(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
+        
+        text = json.loads(match_json.read())
+        return text["team"]
+
+class TeamNames(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
+        
+        text = json.loads(match_json.read())
+        teams = text["team"]
+        
+        names = list()
+        for team in teams:
+            names.append(team["team_name"])
+
+        return names
+
+class TeamLogos(Resource):
+    def get(self, match_id):
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+                str(match_id) + '.json')
+        
+        text = json.loads(match_json.read())
+        teams = text["team"]
+        
+        logos = dict()
+        for team in teams:
+            logos[team["team_name"]] = team["logo_image_path"]
+
+        return logos
+
         
         
