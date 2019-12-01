@@ -13,16 +13,15 @@ class MatchIds(Resource):
         matches = matches.find('channel')
         matches = matches.findall('item')
 
-        match_ids = dict()
+        match_ids = list()
 
         for match in matches:
             link = match.find('guid').text
             description = match.find('description').text
 
             match_id = re.search(r'(?:http:\/\/www.cricinfo.com\/ci\/engine\/match\/)([0-9]*)(?:.html)', link).group(1)
-            match_ids[match_id] = description
+            match_ids.append(str(match_id) + ":" + str(description))
         
-        print(match_ids)
         return match_ids
 
 class Match(Resource):
