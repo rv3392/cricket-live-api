@@ -6,132 +6,56 @@ import json
 from lxml import etree
 import re
 
-class MatchIds(Resource):
+class Match(Resource):
+    def get(self, match_id):
+        details = dict()
+
+        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
+            str(match_id) + '.json')
+
+        text = json.loads(match_json.read())
+
+        print(match_id)
+
+        details['id'] = match_id
+        details['description'] = text['description']
+        details['summary'] = text['match'].get('current_summary', None)
+
+        details['batting'] = text['centre'].get('batting', None)
+        if details['batting'] != None:
+            for batting in details['batting']:
+                batting.pop('preferred_shot', None)
+                batting.pop('wagon_zone', None)    
+
+        details['bowling'] = text['centre'].get('bowling', None)
+        if details['bowling'] != None:
+            for bowling in details['bowling']:
+                batting.pop('pitch_map_lhb', None)
+                batting.pop('pitch_map_rhb', None)
+                batting.pop('overall_lhb', None)
+                batting.pop('overall_rhb', None)
+
+        details['officials'] = text['official']
+        details['teams'] = text['team']
+        details['series'] = text['series']
+        details['match'] = text['match']
+        details['innings'] = text['innings']     
+
+        return details
+
+class MatchId(Resource):
     def get(self):
         matches = etree.parse(
                 "http://static.cricinfo.com/rss/livescores.xml").getroot()
         matches = matches.find('channel')
         matches = matches.findall('item')
 
-        match_ids = list()
+        ids = list()
 
         for match in matches:
             link = match.find('guid').text
-            description = match.find('description').text
-
             match_id = re.search(r'(?:http:\/\/www.cricinfo.com\/ci\/engine\/match\/)([0-9]*)(?:.html)', link).group(1)
-            match_ids.append(str(match_id) + ":" + str(description))
-        
-        return match_ids
 
-class Match(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
+            ids.append(match_id)
 
-        text = json.loads(match_json.read())
-
-        return text
-
-class MatchRecent(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-
-        text = json.loads(match_json.read())
-        return text["live"]
-
-class Status(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-
-        text = json.loads(match_json.read())
-        return text["live"]["status"]
-
-class Innings(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-        
-        text = json.loads(match_json.read())
-        return text["innings"]
-            
-class Description(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-        
-        text = json.loads(match_json.read())
-        return text["description"]
-
-class Summary(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-        
-        text = json.loads(match_json.read())
-        return text["match"]["current_summary"]
-
-class Break(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-        
-        text = json.loads(match_json.read())
-        return text["match"]["current_summary"]
-        
-class CurrentBatsmen(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-        
-        text = json.loads(match_json.read())
-        return text["centre"]["batting"]
-
-class CurrentBowlers(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-        
-        text = json.loads(match_json.read())
-        return text["centre"]["bowling"]
-
-class TeamDetails(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-        
-        text = json.loads(match_json.read())
-        return text["team"]
-
-class TeamNames(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-        
-        text = json.loads(match_json.read())
-        teams = text["team"]
-        
-        names = list()
-        for team in teams:
-            names.append(team["team_name"])
-
-        return names
-
-class TeamLogos(Resource):
-    def get(self, match_id):
-        match_json = urllib.request.urlopen('http://www.cricinfo.com/ci/engine/match/' + 
-                str(match_id) + '.json')
-        
-        text = json.loads(match_json.read())
-        teams = text["team"]
-        
-        logos = dict()
-        for team in teams:
-            logos[team["team_name"]] = team["logo_image_path"]
-
-        return logos
-
-        
-        
+        return ids
