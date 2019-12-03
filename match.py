@@ -30,10 +30,10 @@ class Match(Resource):
         details['bowling'] = text['centre'].get('bowling', None)
         if details['bowling'] != None:
             for bowling in details['bowling']:
-                batting.pop('pitch_map_lhb', None)
-                batting.pop('pitch_map_rhb', None)
-                batting.pop('overall_lhb', None)
-                batting.pop('overall_rhb', None)
+                bowling.pop('pitch_map_lhb', None)
+                bowling.pop('pitch_map_rhb', None)
+                bowling.pop('overall_lhb', None)
+                bowling.pop('overall_rhb', None)
 
         details['officials'] = text['official']
         details['teams'] = text['team']
