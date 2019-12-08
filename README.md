@@ -1,6 +1,5 @@
 <h2>Cricket Live API</h2>
-<b>The cricket live API provides a simple way to retrieve details about current cricket matches using a REST architecture
-and HTTP.</b>
+<b>The cricket live REST API provides a simple way to retrieve details about current cricket matches.</b>
 
 Note: This was made for my personal use in various projects and everything may not work as intended.
 
